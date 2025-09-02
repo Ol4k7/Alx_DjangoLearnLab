@@ -1,20 +1,14 @@
-
-
-\*\*`delete.md`\*\*
-
-```md
-
-\# Delete Operation
-
-
+# Delete Operation
 
 ```python
+# Import the Book model
+from bookshelf.models import Book
 
+# Retrieve the book instance to delete
+book = Book.objects.get(title="Nineteen Eighty-Four")
+
+# Delete the book
 book.delete()
 
-Book.objects.all()
-
-\# <QuerySet \[]>
-
-
-
+# Confirm deletion
+Book.objects.all()  # <QuerySet []>
