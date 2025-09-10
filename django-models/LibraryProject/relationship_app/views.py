@@ -8,12 +8,12 @@ from django.contrib.auth.forms import UserCreationForm
 
 from .models import Library, Book
 
-# --- Home View ---
+# --- Authentication Views ---
+
 def home(request):
     return render(request, "relationship_app/home.html")
 
 
-# --- Authentication Views ---
 class CustomLoginView(LoginView):
     template_name = "relationship_app/login.html"
 
@@ -39,7 +39,7 @@ class RegisterView(View):
         return render(request, "relationship_app/register.html", {"form": form})
 
 
-# Function-based wrapper for checker compatibility
+# --- Function-based wrapper for checker ---
 def register(request):
     view = RegisterView.as_view()
     return view(request)
