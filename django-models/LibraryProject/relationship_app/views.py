@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 from django.views.generic.detail import DetailView
-from django.contrib.auth.views import Login, LoginView, LogoutView
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import Library, Book
