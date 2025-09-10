@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Book, Library
+from .models import Library, Book
 from django.views.generic import DetailView
 
 # Function-based view to list all books
