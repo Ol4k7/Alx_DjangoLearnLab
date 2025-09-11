@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if book %}Edit{% else %}Add{% endif %} Book</title>
+</head>
+<body>
+    <h1>{% if book %}Edit{% else %}Add{% endif %} Book</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label>Title:</label>
+            <input type="text" name="title" value="{{ book.title|default:'' }}">
+        </p>
+        <p>
+            <label>Author:</label>
+            <input type="text" name="author" value="{{ book.author|default:'' }}">
+        </p>
+        <button type="submit">{% if book %}Update{% else %}Create{% endif %}</button>
+    </form>
+    <p><a href="{% url 'view_books' %}">Back to Books List</a></p>
+</body>
+</html>
