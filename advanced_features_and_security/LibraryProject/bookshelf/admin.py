@@ -7,6 +7,6 @@ from .models import Book
 # Customized admin configuration
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'publication_year')
-    list_filter = ('publication_year', 'author')
+    list_display = ('title', 'author')
+    list_filter = ( 'author',)
     search_fields = ('title', 'author')
