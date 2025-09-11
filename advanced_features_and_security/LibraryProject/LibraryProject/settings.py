@@ -32,6 +32,9 @@ DEBUG = False  # Set to False in production
 # Allowed hosts for deployment
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # add your domain here
 
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True  # Forces HTTPS
+
 # Browser security protections
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
@@ -42,7 +45,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # HTTP Strict Transport Security
-SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
