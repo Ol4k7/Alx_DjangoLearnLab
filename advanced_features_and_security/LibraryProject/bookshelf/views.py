@@ -17,11 +17,14 @@ def view_books(request):
 def create_book(request):
     if request.method == 'POST':
         title = request.POST.get('title')
-        author_name = request.POST.get('author')  # Get author name from form
-        author, created = Author.objects.get_or_create(name=author_name)  # Ensure Author instance
+        author_id = request.POST.get('author')  # Get the author ID from the form
+        author = get_object_or_404(Author, id=author_id)  # Fetch the actual Author instance
         Book.objects.create(title=title, author=author)
         return redirect('view_books')
-    return render(request, 'bookshelf/book_form.html')
+
+    authors = Author.objects.all()  # Pass authors to the template for the dropdown
+    return render(request, 'bookshelf/book_form.html', {'authors': authors})
+
 
 # Edit a book (requires can_edit)
 @permission_required('bookshelf.can_edit', raise_exception=True)
