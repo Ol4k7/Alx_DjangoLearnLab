@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .models import Book, Author 
 
 # 🔹 Custom User Manager
 class CustomUserManager(BaseUserManager):
