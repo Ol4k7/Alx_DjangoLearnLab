@@ -1,0 +1,44 @@
+* [33md1ae3e7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m creating files for api project
+* [33me29c9c1[m done for the week on a tuesday
+* [33m66ccc87[m my work is done here today
+* [33mf3c3480[m viewsets
+* [33m045f9a9[m first end point done
+* [33m50eceab[m Task 0: Setup Django project with DRF and Book model
+* [33m9451b91[m my work is done here
+* [33m66e7c6c[m settings for security
+* [33m44db5be[m formexample
+* [33m18e173d[m importing forms module
+* [33m631bcb3[m update on forms
+* [33m70db8ab[m forms update
+* [33mc53f6ee[m Implement security best practices and permission-based book management
+* [33m9ce2487[m Implement role-based permissions and groups for Book management
+* [33m72c0dec[m Initial commit: Add advanced_features_and_security project with custom user model
+* [33md34f523[m Initial commit: Advanced features and custom user model
+* [33m0f92b1c[m Full project push with custom user model and updated apps
+* [33m4cb3471[m Add advanced_features_and_security project and update models
+* [33ma5f2073[m Add checker paths add_book/edit_book/delete_book and keep legacy books/* aliases
+* [33m5a1d17c[m Feat: add custom permissions for Book model and enforce in views
+* [33mf6baf7b[m Full project update with role-based access control
+* [33m683b4df[m Fix: update views and urls for registration URL
+* [33mee68ea6[m Fix URLs to link custom authentication views correctly
+* [33mb5bbd80[m Rewrite views.py to satisfy authentication checker
+* [33m361cb29[m Add missing login import for user authentication
+* [33m3e6c66a[m Implement user authentication views and templates
+* [33mfd98a7a[m Implement user authentication views and templates
+* [33md03cbfd[m Fix: import DetailView from django.views.generic.detail for checker
+* [33mebc62c0[m Fix: reorder import to satisfy checker
+* [33m318c025[m Add list_books and library_detail views with templates
+* [33m19a6c05[m Add views, urls, and templates for books and libraries in relationship_app
+* [33mdd827fa[m Fix query_samples.py to use Librarian.objects.get(library=...)
+* [33mb85f3e5[m Fix: include LibraryProject as normal folder, not submodule
+* [33md213235[m Add django-models project with relationship_app models and queries
+* [33mb39c5ba[m Push complete django-models project with relationship_app
+* [33mf5bc79b[m Add django_models project with relationship_app and advanced model relationships
+* [33m0b0fe94[m Implement advanced model relationships in django-models project
+* [33m2b53579[m Force push entire working folder to GitHub
+* [33m8b91e34[m Remove pycache and db.sqlite3 from tracking
+* [33m7b76f96[m Add Django ignores
+* [33m0954204[m Add Book model and CRUD operations documentation
+* [33ma8f317f[m Add Book model and CRUD operations documentation
+* [33ma8643db[m Added README.md for LibraryProject
+* [33mbd59dbb[m Task 0: Introduction to Django - Created LibraryProject
