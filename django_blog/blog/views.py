@@ -9,10 +9,12 @@ from .models import Post
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
 
-# -----------------------------
-# USER REGISTRATION AND PROFILE
-# -----------------------------
+# ==========================================
+# USER REGISTRATION AND PROFILE MANAGEMENT
+# ==========================================
+
 def register(request):
+    """Handles user registration."""
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -27,45 +29,45 @@ def register(request):
 
 @login_required
 def profile(request):
+    """Handles user profile updates."""
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, 'Your profile has been updated.')
+            messages.success(request, 'Your profile has been updated successfully.')
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
-    context = {
-        'u_form': u_form,
-        'p_form': p_form
-    }
+
+    context = {'u_form': u_form, 'p_form': p_form}
     return render(request, 'blog/profile.html', context)
 
 
-# -----------------------------
+# ==========================================
 # BLOG POST CRUD FUNCTIONALITY
-# -----------------------------
+# ==========================================
 
-# List all posts
 class PostListView(ListView):
+    """Displays a paginated list of all blog posts."""
     model = Post
-    template_name = 'blog/post_list.html'  # <app>/<model>_list.html
+    template_name = 'blog/post_list.html'
     context_object_name = 'posts'
     ordering = ['-published_date']
     paginate_by = 5
 
 
-# View a single post in detail
 class PostDetailView(DetailView):
+    """Displays details of a single post."""
     model = Post
     template_name = 'blog/post_detail.html'
 
 
-# Create a new post (only logged-in users)
 class PostCreateView(LoginRequiredMixin, CreateView):
+    """Allows authenticated users to create new blog posts."""
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
@@ -76,8 +78,8 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-# Update an existing post (only the author)
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """Allows post authors to update their own posts."""
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
@@ -88,16 +90,18 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
     def test_func(self):
+        """Ensures only the author can edit the post."""
         post = self.get_object()
         return self.request.user == post.author
 
 
-# Delete a post (only the author)
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Allows post authors to delete their own posts."""
     model = Post
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('post-list')
 
     def test_func(self):
+        """Ensures only the author can delete the post."""
         post = self.get_object()
         return self.request.user == post.author
