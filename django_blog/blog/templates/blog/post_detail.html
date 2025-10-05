@@ -1,18 +1,84 @@
 {% extends "blog/base.html" %}
 {% block title %}{{ post.title }}{% endblock %}
+
 {% block content %}
-    <article>
-        <h1>{{ post.title }}</h1>
-        <p class="meta">By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
-        <div class="post-body">{{ post.content|linebreaks }}</div>
+<article>
+    <h1>{{ post.title }}</h1>
+    <p class="meta">
+        By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}
+    </p>
 
-        {% if user == post.author %}
-            <p>
-                <a href="{% url 'post-update' post.pk %}">Edit</a> |
-                <a href="{% url 'post-delete' post.pk %}">Delete</a>
-            </p>
-        {% endif %}
+    <div class="post-body">{{ post.content|linebreaks }}</div>
 
-        <p><a href="{% url 'post-list' %}">Back to posts</a></p>
-    </article>
+    <!-- 🏷️ Tags Section -->
+    {% if post.tags.exists %}
+        <p class="tags">
+            <strong>Tags:</strong>
+            {% for tag in post.tags.all %}
+                <a href="{% url 'post-by-tag' tag.slug %}" class="badge bg-info text-dark">{{ tag.name }}</a>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {% if user == post.author %}
+        <p>
+            <a href="{% url 'post-update' post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'post-delete' post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </p>
+    {% endif %}
+
+    <p><a href="{% url 'post-list' %}" class="btn btn-secondary">← Back to posts</a></p>
+</article>
+
+<hr>
+
+<!-- 💬 Comments Section -->
+<section id="comments">
+    <h3>Comments ({{ post.comments.count }})</h3>
+    {% for comment in comments %}
+        <div class="comment" style="border-bottom: 1px solid #ddd; margin-bottom: 1rem; padding-bottom: .5rem;">
+            <p><strong>{{ comment.author.username }}</strong> — {{ comment.created_at|date:"M d, Y H:i" }}</p>
+            <p>{{ comment.content|linebreaks }}</p>
+
+            {% if user == comment.author %}
+                <p>
+                    <a href="{% url 'comment-update' comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <hr>
+        <h4>Add a Comment</h4>
+        <form method="post" action="{% url 'comment-create' post.pk %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
+    {% endif %}
+</section>
+
+<hr>
+
+<!-- 🔁 Related Posts Section -->
+{% if related_posts %}
+    <section id="related-posts">
+        <h3>Related Posts</h3>
+        <ul>
+            {% for related in related_posts %}
+                {% if related != post %}
+                    <li><a href="{% url 'post-detail' related.pk %}">{{ related.title }}</a></li>
+                {% endif %}
+            {% empty %}
+                <li>No related posts found.</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}
 {% endblock %}

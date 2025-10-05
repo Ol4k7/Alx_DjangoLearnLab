@@ -11,6 +11,7 @@ urlpatterns = [
 
     # --- Blog Post CRUD URLs ---
     path('', views.PostListView.as_view(), name='post-list'),
+    path('tag/<slug:tag_slug>/', views.PostListView.as_view(), name='post-by-tag'),  # ✅ NEW: Tag filter
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
     path('post/new/', views.PostCreateView.as_view(), name='post-create'),
     path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),

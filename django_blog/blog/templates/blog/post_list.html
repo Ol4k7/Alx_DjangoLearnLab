@@ -1,32 +1,68 @@
 {% extends "blog/base.html" %}
 {% block title %}All Posts{% endblock %}
+
 {% block content %}
-    <h1>All Posts</h1>
+<div class="post-list-container" style="display: flex; gap: 2rem;">
+    <div style="flex: 3;">
+        <h1>All Posts</h1>
 
-    {% if user.is_authenticated %}
-        <p><a href="{% url 'post-create' %}">Create new post</a></p>
-    {% endif %}
+        {% if user.is_authenticated %}
+            <p><a href="{% url 'post-create' %}" class="btn btn-primary">Create new post</a></p>
+        {% endif %}
 
-    {% for post in posts %}
-        <article class="post-snippet">
-            <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
-            <p class="meta">By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
-            <p>{{ post.content|truncatechars:200 }}</p>
-            <p><a href="{% url 'post-detail' post.pk %}">Read more</a></p>
-        </article>
-    {% empty %}
-        <p>No posts yet.</p>
-    {% endfor %}
+        <!-- 🔍 Search Bar -->
+        <form method="get" action="" class="search-form" style="margin-bottom: 20px;">
+            <input type="text" name="q" placeholder="Search posts..." value="{{ request.GET.q }}" style="padding: 8px; width: 70%;">
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
 
-    {% if is_paginated %}
-        <div class="pagination">
-            {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            {% endif %}
-            <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Next</a>
-            {% endif %}
-        </div>
-    {% endif %}
+        <!-- 📑 Posts List -->
+        {% for post in posts %}
+            <article class="post-snippet" style="margin-bottom: 2rem;">
+                <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+                <p class="meta">By {{ post.author.username }} — {{ post.published_date|date:"M d, Y H:i" }}</p>
+                <p>{{ post.content|truncatechars:200 }}</p>
+                <p><a href="{% url 'post-detail' post.pk %}" class="btn btn-sm btn-outline-primary">Read more</a></p>
+
+                <!-- 🏷️ Tags -->
+                {% if post.tags.all %}
+                    <p class="tags">
+                        {% for tag in post.tags.all %}
+                            <a href="{% url 'post-by-tag' tag.slug %}" class="badge bg-info text-dark">{{ tag.name }}</a>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </article>
+        {% empty %}
+            <p>No posts yet.</p>
+        {% endfor %}
+
+        <!-- 📄 Pagination -->
+        {% if is_paginated %}
+            <div class="pagination" style="margin-top: 20px;">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 🏷️ Sidebar with All Tags -->
+    <aside style="flex: 1; border-left: 1px solid #ddd; padding-left: 1rem;">
+        <h3>Tags</h3>
+        <ul style="list-style: none; padding: 0;">
+            {% for tag in all_tags %}
+                <li>
+                    <a href="{% url 'post-by-tag' tag.slug %}" class="text-decoration-none">{{ tag.name }}</a>
+                </li>
+            {% empty %}
+                <li>No tags yet.</li>
+            {% endfor %}
+        </ul>
+    </aside>
+</div>
 {% endblock %}
