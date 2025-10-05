@@ -118,56 +118,43 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # COMMENT FUNCTIONALITY (CRUD)
 # ==========================================
 
-@login_required
-def add_comment(request, pk):
-    """Allows a logged-in user to add a comment to a specific post."""
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            messages.success(request, 'Your comment has been added successfully!')
-            return redirect('post-detail', pk=pk)
-    else:
-        form = CommentForm()
-    return render(request, 'blog/add_comment.html', {'form': form, 'post': post})
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    """Allows authenticated users to add comments to posts."""
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post_id = self.kwargs['pk']
+        messages.success(self.request, "Your comment has been added successfully!")
+        return super().form_valid(form)
 
 
-@login_required
-def edit_comment(request, pk):
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Allows comment authors to edit their own comments."""
-    comment = get_object_or_404(Comment, pk=pk)
-    if request.user != comment.author:
-        messages.error(request, 'You are not allowed to edit this comment.')
-        return redirect('post-detail', pk=comment.post.pk)
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
 
-    if request.method == 'POST':
-        form = CommentForm(request.POST, instance=comment)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your comment has been updated successfully!')
-            return redirect('post-detail', pk=comment.post.pk)
-    else:
-        form = CommentForm(instance=comment)
+    def form_valid(self, form):
+        messages.success(self.request, "Your comment has been updated successfully!")
+        return super().form_valid(form)
 
-    return render(request, 'blog/edit_comment.html', {'form': form})
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
 
 
-@login_required
-def delete_comment(request, pk):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Allows comment authors to delete their own comments."""
-    comment = get_object_or_404(Comment, pk=pk)
-    if request.user != comment.author:
-        messages.error(request, 'You are not allowed to delete this comment.')
-        return redirect('post-detail', pk=comment.post.pk)
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
 
-    if request.method == 'POST':
-        post_id = comment.post.pk
-        comment.delete()
-        messages.success(request, 'Your comment has been deleted successfully!')
-        return redirect('post-detail', pk=post_id)
+    def get_success_url(self):
+        messages.success(self.request, "Your comment has been deleted successfully!")
+        return self.object.post.get_absolute_url()
 
-    return render(request, 'blog/delete_comment.html', {'comment': comment})
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
