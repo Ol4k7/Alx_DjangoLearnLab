@@ -1,9 +1,10 @@
+from rest_framework import status, permissions, viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions, viewsets
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, get_user_model
 from rest_framework.decorators import action
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, FollowSerializer
 
@@ -58,33 +59,37 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# --- User Follow/Unfollow & Listing ViewSet ---
+# --- Follow a User ---
+class FollowUserView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        user_to_follow = get_object_or_404(CustomUser, pk=pk)
+        if user_to_follow == request.user:
+            return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.add(user_to_follow)
+        return Response({'detail': f'You are now following {user_to_follow.username}.'}, status=status.HTTP_200_OK)
+
+
+# --- Unfollow a User ---
+class UnfollowUserView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        user_to_unfollow = get_object_or_404(CustomUser, pk=pk)
+        if user_to_unfollow == request.user:
+            return Response({'detail': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+        request.user.following.remove(user_to_unfollow)
+        return Response({'detail': f'You have unfollowed {user_to_unfollow.username}.'}, status=status.HTTP_200_OK)
+
+
+# --- User ViewSet (optional, for listing/following/followers) ---
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    @action(detail=True, methods=['post'])
-    def follow(self, request, pk=None):
-        user_to_follow = self.get_object()
-        if user_to_follow == request.user:
-            return Response({'error': "You cannot follow yourself."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        request.user.following.add(user_to_follow)
-        return Response({'status': f'You are now following {user_to_follow.username}'},
-                        status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['post'])
-    def unfollow(self, request, pk=None):
-        user_to_unfollow = self.get_object()
-        if user_to_unfollow == request.user:
-            return Response({'error': "You cannot unfollow yourself."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        request.user.following.remove(user_to_unfollow)
-        return Response({'status': f'You unfollowed {user_to_unfollow.username}'},
-                        status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
     def followers(self, request):
