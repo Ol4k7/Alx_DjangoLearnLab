@@ -57,7 +57,7 @@ packaging==25.0
 pillow==11.3.0
 propcache==0.3.2
 protobuf==6.32.1
-PyAudio @ file:///C:/Users/KRISTEN/Downloads/PyAudio-0.2.14-cp313-cp313-win_amd64.whl#sha256=692d8c1446f52ed2662120bcd9ddcb5aa2b71f38bda31e58b19fb4672fffba69
+PyAudio 
 pydub==0.25.1
 PyJWT==2.10.1
 pyparsing==3.2.4
