@@ -20,8 +20,8 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
 
     # Follow and unfollow endpoints (checker requires these)
-    path('follow/<int:pk>/', FollowUserView.as_view(), name='follow-user'),
-    path('unfollow/<int:pk>/', UnfollowUserView.as_view(), name='unfollow-user'),
+    path('follow/<int:user_id>/', FollowUserView.as_view(), name='follow_user'),
+    path('unfollow/<int:user_id>/', UnfollowUserView.as_view(), name='unfollow_user'),
 
     # Include router-generated endpoints (/users/, /users/<id>/, etc.)
     path('', include(router.urls)),
