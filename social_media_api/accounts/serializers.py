@@ -13,7 +13,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
-        # Use get_user_model().objects.create_user (checker requirement)
         user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
@@ -24,9 +23,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.profile_picture = validated_data.get('profile_picture', None)
         user.save()
 
-        # Create an auth token for the new user (checker requirement)
+        # Create an auth token for the new user
         Token.objects.create(user=user)
-
         return user
 
 
@@ -44,6 +42,25 @@ class LoginSerializer(serializers.Serializer):
 
 # --- User Profile Serializer ---
 class UserSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers']
+        fields = [
+            'id', 'username', 'email', 'bio', 'profile_picture',
+            'followers_count', 'following_count'
+        ]
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.following.count()
+
+
+# --- Follow Serializer ---
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'bio', 'profile_picture']
